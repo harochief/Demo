@@ -1,0 +1,198 @@
+﻿@model IEnumerable<EcommerceSite.Models.Item>
+
+
+@using EcommerceSite.Models;
+@using EcommerceSite.DAL
+@using Microsoft.AspNet.Identity
+
+@{
+    ViewBag.Title = "Index";
+    decimal? total = 0;
+    List<Item> cart = (List<Item>)Session["cart"];
+    total = cart.Sum(item => item.Product.Price * item.Quantity);
+
+    if (total == 0)
+    {
+
+
+
+        Response.Redirect("~/Home/Index");
+    }
+
+
+
+}
+@if (Request.Browser["IsMobileDevice"] == "true")
+{
+
+
+
+    <h3>Your Order</h3>
+    <div style="overflow-x:auto;padding: 0px" class="table-responsive">
+        <table class="table">
+            <tr>
+
+
+                <th>Name</th>
+                <th>Photo</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Sub Total</th>
+                <th>Option</th>
+
+            </tr>
+            @{
+                if (Session["cart"] == null)
+
+
+
+                { Response.Redirect("~/Products/Shop"); }
+
+
+
+
+
+
+                foreach (Item item in (List<Item>)Session["cart"])
+                {
+
+
+                    <tr>
+
+
+                        <td>@item.Product.ProductName</td>
+                        <td>
+                         
+                            <img style="width:80px" class="img-responsive" src="~/UploadedFiles/@item.Product.fileupload" />
+                        </td>
+                        <td>@item.Product.Price</td>
+                        <td>@item.Quantity</td>
+                        <td>R @(item.Product.Price * item.Quantity)</td>
+                        <td><a href="@Url.Action("Remove", "Cart", new { id = item.Product.ID })">Remove</a></td>
+
+                    </tr>
+                }
+            }
+            <tr>
+                <td align="right" colspan="4">Total</td>
+                <td>
+                    @{
+                        
+                      total = cart.Sum(item => item.Product.Price * item.Quantity);
+
+
+                    }
+                    R @total
+                </td>
+
+            </tr>
+        </table>
+        <br>
+    </div>
+
+
+    <table class="table">
+
+        <tr>
+
+            <td><a href="@Url.Action("Shop", "Products")"><strong>Continue Shopping</strong></a></td>
+
+            <td><a href="@Url.Action("Create", "CheckOuts")"> <strong>Proceed To Checkout</strong> </a></td>
+
+        </tr>
+
+    </table>
+
+
+}
+
+else
+{
+
+
+    <div style="margin-top:100px" class="col-md-12">
+        <h3>Your Order</h3>
+        <div style="overflow-x:auto;" class="table-responsive">
+            <table class="table">
+                <tr>
+
+
+                    <th>Name</th>
+                    <th>Photo</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Sub Total</th>
+                    <th>Option</th>
+
+                </tr>
+                @{
+                    if (Session["cart"] == null)
+
+
+
+                    { Response.Redirect("~/Products/Shop"); }
+
+
+
+
+
+
+                    foreach (Item item in (List<Item>)Session["cart"])
+                    {
+
+
+                        <tr>
+
+
+                            <td>@item.Product.ProductName</td>
+                            <td>
+        
+                              
+
+                                <img style="width: 80px" class="img-responsive" src="@Url.Action("Producto", "File", new { id = item.Product.ID})" />
+                            </td>
+                            <td>@item.Product.Price</td>
+                            <td>@item.Quantity</td>
+                            <td>R @(item.Product.Price * item.Quantity)</td>
+                            <td><a href="@Url.Action("Remove", "Cart", new { id = item.Product.ID })">Remove</a></td>
+
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td align="right" colspan="4">Total</td>
+                    <td>
+                        @{
+                       
+                          total = cart.Sum(item => item.Product.Price * item.Quantity);
+
+
+                        }
+                        R @total
+                    </td>
+
+                    <td><a href="@Url.Action("Index", "CheckOuts")"> <strong>Proceed To Checkout</strong> </a></td>
+                </tr>
+            </table>
+            <br>
+        </div>
+
+
+        <table class="table">
+
+            <tr>
+
+
+
+
+
+                <td><a href="@Url.Action("Index", "Home")"><strong>Continue Shopping</strong></a></td>
+
+
+            </tr>
+
+        </table>
+    </div>
+
+
+}
